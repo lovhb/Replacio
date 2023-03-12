@@ -1,6 +1,5 @@
 import os
 import shutil
-import customtkinter
 
 def replace_files(source_dir_var, destination_dir_var, button):
     source_dir = source_dir_var.get()

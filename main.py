@@ -1,5 +1,4 @@
 import customtkinter
-import time
 from customtkinter import filedialog
 from customtkinter import *
 
