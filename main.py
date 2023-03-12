@@ -11,13 +11,13 @@ OPTIONS = {
     "Replace Files": replacefiles.replace_files,
     "Copy Files": replacefiles.copy_files
 }
-
+        
 class ReplacioGUI:
     def __init__(self, master):
         self.master = master
         self.master.geometry("750x600")
         self.master.title("Replacio")
-
+        
         # Create StringVars to hold the paths of the source and destination folders
         self.source_folder_path = StringVar()
         self.destination_folder_path = StringVar()
