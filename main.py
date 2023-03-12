@@ -64,7 +64,10 @@ class ReplacioGUI:
         print(destination_filename)
 
     def run(self):
-        replacefiles.replace_files(source_dir_var=self.source_folder_path, destination_dir_var=self.destination_folder_path, button=self.button3)
+        if self.optionmenu1.get() == "Replace Files":
+            replacefiles.replace_files(source_dir_var=self.source_folder_path, destination_dir_var=self.destination_folder_path)
+        elif self.optionmenu1.get() == "Copy Files":
+            replacefiles.copy_files(source_dir_var=self.source_folder_path, destination_dir_var=self.destination_folder_path)
         print("Done!")
         self.button3.configure(text="Done! Click again to start")
 
