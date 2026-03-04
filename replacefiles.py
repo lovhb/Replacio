@@ -1,50 +1,60 @@
 import os
 import shutil
 
-def replace_files(source_dir_var, destination_dir_var):
-    # Copies files from source directory to destination directory, replacing any existing files with the same name and skipping any file that doesn't match an existing file.
-    
-    # Get the source and destination directories from the StringVars
+def replace_files(source_dir_var, destination_dir_var, log_func=print):
+    # Copies files from source directory to destination directory, replacing any existing files
+    # with the same name and skipping any file that doesn't match an existing file.
+
     source_dir = source_dir_var.get()
     destination_dir = destination_dir_var.get()
-    
-    # Loop through the files in the destination directory
+
+    replaced = 0
+    skipped = 0
+
+    # Walk the destination tree
     for root, dirs, files in os.walk(destination_dir):
         for filename in files:
-            # Create paths to the source and destination files
             source_file = os.path.join(source_dir, filename)
             destination_file = os.path.join(root, filename)
-            
-            # If the source file exists and is a file (not a directory), replace the source file with it
-            if os.path.isfile(source_file) and os.path.exists(destination_file):
+
+            if os.path.isfile(source_file):
                 try:
                     shutil.copyfile(source_file, destination_file)
-                    print(f"{filename} has been replaced in {destination_file}")
+                    log_func(f"Replaced: {destination_file}")
+                    replaced += 1
                 except (FileNotFoundError, PermissionError) as e:
-                    print(f"Error occurred while replacing {filename}: {e}")
+                    log_func(f"Error replacing {filename}: {e}")
+                    skipped += 1
             else:
-                print(f"{filename} not found in {source_dir} or {destination_file} not found in {destination_dir}")
+                log_func(f"Skipped (not a regular file in source): {filename}")
+                skipped += 1
 
-def copy_files(source_dir_var, destination_dir_var):
-    # Copies files from the source directory to each folder in the destination directory.
-    
-    # Get the source and destination directories from the StringVars
+    return replaced, skipped
+
+def copy_files(source_dir_var, destination_dir_var, log_func=print):
+    # Copies files from the source directory to each subfolder in the destination directory.
+
     source_dir = source_dir_var.get()
     destination_dir = destination_dir_var.get()
-    
-    # Loop through the folders in the destination directory
+
+    copied = 0
+    skipped = 0
+
     for foldername in os.listdir(destination_dir):
-        # If the folder is actually a directory, copy files from the source directory to it
-        if os.path.isdir(os.path.join(destination_dir, foldername)):
-            destination = os.path.join(destination_dir, foldername)
+        folder_path = os.path.join(destination_dir, foldername)
+        if os.path.isdir(folder_path):
             for filename in os.listdir(source_dir):
                 source = os.path.join(source_dir, filename)
-                # If the file exists and is a file (not a directory), copy it to the destination folder
-                if os.path.isfile(source) and os.path.exists(destination):
+                if os.path.isfile(source):
                     try:
-                        shutil.copy2(source, destination)
-                        print(f"{filename} has been copied to {destination}")
+                        shutil.copy2(source, folder_path)
+                        log_func(f"Copied: {filename} → {folder_path}")
+                        copied += 1
                     except (FileNotFoundError, PermissionError) as e:
-                        print(f"Error occurred while copying {filename}: {e}")
+                        log_func(f"Error copying {filename}: {e}")
+                        skipped += 1
                 else:
-                    print(f"{filename} not found in {source_dir} or {destination} not found in {destination_dir}")
+                    log_func(f"Skipped (not a regular file in source): {filename}")
+                    skipped += 1
+
+    return copied, skipped
